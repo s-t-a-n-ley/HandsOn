@@ -11,5 +11,19 @@ LSTM Keypoint Model deployed on Flask that detects real-time dynamic Indian sign
 ## Video Demo of Web App
 
 ### Indian Sign Language Gestures
+
 1. Hello
-![](/outputs/Hello.gif){.image25percent}
+   
+![](/outputs/Hello.gif)
+
+2. Home
+
+![](/outputs/Home.gif)
+
+3. Good
+
+![](/outputs/Good.gif)
+
+4. ImSorry
+
+![](/outputs/ImSorry.gif)
