@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon2.ico') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/slider.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;600&display=swap" rel="stylesheet">
+  <title>HandsOn</title>
+  <meta name="description" content="An interactive dynamic sign language app created using LSTM keypoint detection.">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      margin: 0;
+      background: linear-gradient(135deg, #1E3A8A, #0D47A1);
+      color: #FFFFFF;
+    }
+
+    .app-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px;
+      background-color: #0D47A1; /* Dark blue */
+      color: #FFFFFF;
+    }
+
+    .logo-container img {
+      width: 50px;
+    }
+
+    .intro-container h1 {
+      font-size: 2.5em;
+      margin: 0;
+    }
+
+    .intro-container p {
+      margin: 5px 0 0;
+    }
+
+    .toggle-container, .learning-container {
+      text-align: center;
+      margin: 20px;
+    }
+
+    .slider {
+      width: 80%;
+      margin: 10px 0;
+    }
+
+    .switch-label {
+      display: inline-block;
+      margin-right: 10px;
+    }
+
+    .video-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      padding: 20px;
+      background-color: #0D47A1;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .video-feed {
+      width: 100%;
+      max-width: 800px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .image-wrapper {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .imageBox {
+      
+      text-align: center;
+      width: 150px;
+    }
+
+    .imageBox img {
+      width: 120%;
+      margin: 50px;
+     
+      cursor: pointer;
+    }
+
+    .hoverImg {
+      position: absolute;
+      top: 50%;
+      left: -5%;
+      /* transform: translate(-50%, -50%); */
+      width: 150px;
+      height: 150px;
+      display: none;
+    }
+
+    .hoverImg img {
+      width: 200%;
+      height:auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .imageBox:hover .hoverImg {
+      display: block;
+    }
+  </style>
+  <script type="text/javascript" charset="utf-8">
+    var socket = io();
+    socket.on('connect', function () {
+      socket.emit('my event', { data: 'I\'m connected!' });
+    });
+  </script>
+</head>
+
+<body>
+  <div class="game-container">
+    <div class="app-bar">
+      <div class="logo-container">
+        <img class="logo" src="../static/images/Hand-Logo.png" alt="HandsOn logo">
+      </div>
+      <div class="intro-container">
+        <h1 class="title-text">HandsOn</h1>
+        <p class="description-text">A LSTM keypoint dynamic sign language recognition model</p>
+      </div>
+    </div>
+    <div class="toggle-container">
+      <div class="slidecontainer">
+        <p>
+          <a class="ui-tooltip" title="Adjust Minimum Threshold for LSTM model to display animal emoji on webcam screen.">
+            <span style="cursor: help;">LSTM Model Detection Threshold</span></a>
+          = <span id="demo"></span>
+        </p>
+        <input type="range" min="0" max="1" value="0.9" step="0.05" class="slider" id="myRange">
+      </div>
+      <div class="switch-container">
+        <a class="ui-tooltip" title="Toggle Keypoint display on webcam screen.">
+          <p class="switch-label" style="cursor: help;">Display Keypoints</p>
+        </a>
+        <label class="switch">
+          <input type="checkbox" id="switch1" onclick="switched(this)" checked>
+          <span class="slider_switch round"></span>
+        </label>
+      </div>
+    </div>
+    <div class="video-container">
+      <img class="video-feed" src="{{ url_for('video_feed') }}" alt='Webcam display'>
+    </div>
+  </div>
+  <div class="learning-container">
+    <div class="app-bar" style="margin-top:40px">
+      <div class="intro-container">
+        <h1 class="title-text">Learn Indian Sign Language</h1>
+        <p class="description-text">Hover over the words to see how to perform a Sign</p>
+      </div>
+    </div>
+    <div class="image-wrapper">
+      <div class="imageBox">
+        <h2>Hello</h2>
+        <div class="hoverImg">
+          <img src="../static/gif/Hello.mp4" alt="Hello">
+        </div>
+      </div>
+      <div class="imageBox">
+        <h2>Good</h2>
+        <div class="hoverImg">
+          <img src="../static/gif/Good.MP4" alt="Good">
+        </div>
+      </div>
+      <div class="imageBox">
+        <h2>Home</h2>
+        <div class="hoverImg">
+          <img src="../static/gif/Home.mp4" alt="Home">
+        </div>
+      </div>
+      <div class="imageBox">
+        <h2>I'm Sorry</h2>
+        <div class="hoverImg">
+        <img src="../static/gif/ImSorry.mp4" alt="I'm Sorry">
+        </div>
+      </div>
+    </div>
+  </div>
+  <script>
+    //Toggle Keypoints Switch
+    var switchValues = {};
+    function switched(switchElement) {
+      switchValues[switchElement.id] = switchElement.checked;
+      var toggle_value = [{ "toggle": switchValues[switchElement.id] }];
+      $.ajax({
+        type: "POST",
+        url: "/process_toggle_value",
+        data: JSON.stringify(toggle_value),
+        contentType: "application/json",
+        dataType: 'json',
+        success: function (result) {
+          console.log(result);
+        }
+      });
+    }
+
+    //LSTM Model slider AJAX
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("demo");
+    output.innerHTML = slider.value;
+
+    slider.oninput = function () {
+      output.innerHTML = this.value;
+      var slider_value = [{ "slider": this.value }];
+      $.ajax({
+        type: "POST",
+        url: "/process_slider_value",
+        data: JSON.stringify(slider_value),
+        contentType: "application/json",
+        dataType: 'json',
+        success: function (result) {
+          console.log(result);
+        }
+      });
+    }
+  </script>
+</body>
+
+</html>
