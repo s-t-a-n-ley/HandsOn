@@ -66,7 +66,7 @@ model.compile(optimizer='Adam', loss='categorical_crossentropy', metrics=['categ
    
 ![output1](https://github.com/user-attachments/assets/969372ec-565c-4cff-9671-03369fa5f4d4)
 
-3. Train & Test Loss over epochs
+2. Train & Test Loss over epochs
    
 ![output2](https://github.com/user-attachments/assets/478e7dea-142b-4c61-bcb3-eff31b4c1267)
 
